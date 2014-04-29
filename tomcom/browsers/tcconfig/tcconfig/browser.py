@@ -9,6 +9,9 @@ class ITCConfig(Interface):
     def set(self):
         """ """
 
+    def set_new(self):
+        """ """
+
     def get(self,key,default=None):
         """ """
 
@@ -25,6 +28,18 @@ class Browser(BrowserView):
             annotation[key]=OOBTree()
         annotation[key].update(value)
 
+    def _set_new(self,key,value):
+
+        context=self.context
+        annotation=context.getAdapter('annotation')
+
+        if  annotation.has_key(key):
+            del annotation[key]
+
+        annotation[key]=OOBTree()
+        annotation[key].update(value)
+
+
     def set(self):
         """ """
         context=self.context
@@ -32,12 +47,30 @@ class Browser(BrowserView):
         context.getBrowser('tpcheck').auth_tcconfig_manage()
 
         form=context.REQUEST.form
+        print form
+
         key=form.get('key')
         self._set(key,form)
 
         message=context.getAdapter('message')
         message('Changes saved.')
         return context.REQUEST.RESPONSE.redirect(context.REQUEST['HTTP_REFERER'])
+
+    def set_new(self):
+        """ """
+        context=self.context
+
+        context.getBrowser('tpcheck').auth_tcconfig_manage()
+
+        form=context.REQUEST.form
+
+        key=form.get('key')
+        self._set_new(key,form)
+
+        message=context.getAdapter('message')
+        message('Changes saved.')
+        return context.REQUEST.RESPONSE.redirect(context.REQUEST['HTTP_REFERER'])
+
 
     def get(self,key,default=None):
 
